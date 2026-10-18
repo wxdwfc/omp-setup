@@ -1,0 +1,3 @@
+# Marketplace source                      Plugin ID
+anthropics/claude-plugins-official         context7@claude-plugins-official
+anthropics/claude-plugins-official         frontend-design@claude-plugins-official

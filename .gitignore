@@ -5,6 +5,7 @@
 !/install.sh
 !/omp/
 !/omp/config.yml
+!/omp/plugins.txt
 !/omp/skills/
 !/omp/skills/wording/
 !/omp/skills/wording/SKILL.md

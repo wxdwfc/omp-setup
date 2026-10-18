@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Link this checkout's config and wording skill into the active omp profile.
+# Link config and wording, then install missing user-scoped marketplace plugins.
 set -euo pipefail
 
 repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
@@ -9,6 +9,9 @@ skill_dir="$repo_dir/omp/skills/wording"
 for file in "$skill_dir/SKILL.md" "$skill_dir/references/wording-rules.md"; do
     [[ -f "$file" ]] || { printf 'Missing skill file: %s\n' "$file" >&2; exit 1; }
 done
+plugin_file="$repo_dir/omp/plugins.txt"
+[[ -f "$plugin_file" ]] || { printf 'Missing plugin list: %s\n' "$plugin_file" >&2; exit 1; }
+command -v jq >/dev/null || { printf 'Install jq before running this script.\n' >&2; exit 1; }
 agent_dir=$(omp config path)
 [[ -n "$agent_dir" ]] || { printf 'omp returned an empty config directory\n' >&2; exit 1; }
 mkdir -p -- "$agent_dir"
@@ -43,3 +46,31 @@ link_path() {
 link_path "$source_file" "$target"
 mkdir -p -- "$agent_dir/skills"
 link_path "$skill_dir" "$agent_dir/skills/wording"
+
+# Use omp's inventory rather than copying machine-specific plugin state.
+installed=$(omp plugin list --json)
+marketplaces=$(omp plugin marketplace list)
+has_marketplace() {
+    local name rest
+    while read -r name rest; do
+        [[ "$name" != "$1" ]] || return 0
+    done <<< "$marketplaces"
+    return 1
+}
+
+while read -r source plugin || [[ -n "$source" ]]; do
+    [[ -n "$source" && "$source" != \#* ]] || continue
+    marketplace=${plugin##*@}
+    if ! has_marketplace "$marketplace"; then
+        omp plugin marketplace add "$source"
+        marketplaces+=$'\n'"$marketplace $source"
+    fi
+    if jq -e --arg id "$plugin" \
+        'any(.marketplace[]; .id == $id and any(.entries[]; .scope == "user"))' \
+        <<< "$installed" >/dev/null; then
+        printf 'Already installed: %s (user)\n' "$plugin"
+    else
+        omp plugin install --scope user "$plugin"
+        installed=$(omp plugin list --json)
+    fi
+done < "$plugin_file"

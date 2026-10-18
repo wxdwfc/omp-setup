@@ -1,10 +1,10 @@
 # omp-setup
 
-个人 omp 配置、自写 wording skill 及其必需规则，不包含 secrets、凭据、会话或缓存。
+个人 omp 配置、自写 wording skill 及其必需规则、marketplace 插件清单，不包含 secrets、凭据、会话或缓存。
 
 ## 安装
 
-先安装 omp，然后克隆仓库并运行：
+先安装 omp、Git 和 jq（macOS 可用 `brew install jq`），然后克隆仓库并运行；首次安装插件需要联网：
 
 ```bash
 git clone https://github.com/wxdwfc/omp-setup.git
@@ -22,6 +22,8 @@ cd omp-setup
 - 软链接使用绝对路径；移动仓库后重新运行 `./install.sh`。
 - 换机器后，按需使用 `omp login` 重新登录。
 
+脚本还会按 `omp/plugins.txt` 注册 marketplace，并在当前 profile 的 user scope 安装缺失插件。已安装的插件直接跳过，不强制重装、不自动升级，也不改变禁用状态。
+
 ## Wording
 
 `modelRoles.wording` 只选择模型；实际工作流程由 `omp/skills/wording/SKILL.md` 提供。使用 `/skill:wording <文件或范围>` 启动逐条确认的 wording 检查；需要该模型时用 `omp --model @wording`。
@@ -29,6 +31,28 @@ cd omp-setup
 `references/wording-rules.md` 随 skill 保存完整的保义约束和 wording 规则快照，来源记录在文件中。项目有 `third_party/agentic-research/` 时优先读取项目版本，否则使用随仓库安装的快照，不再依赖某台机器的绝对路径。
 
 论文项目的 `PAPER.md`、其指定的 style skill 和范文仍是项目自身依赖，不复制到本仓库；缺失时 wording 工作流会明确报告。
+
+## Marketplace 插件
+
+`omp/plugins.txt` 每行两列：marketplace 来源、`插件名@marketplace名称`；空行和以 `#` 开头的注释行会跳过。当前清单：
+
+| 插件 | 来源 | 用途 |
+| --- | --- | --- |
+| `context7@claude-plugins-official` | `anthropics/claude-plugins-official` | 查询第三方库文档 |
+| `frontend-design@claude-plugins-official` | `anthropics/claude-plugins-official` | 前端设计指导 |
+
+换机器或拉取清单更新后运行 `./install.sh`。清单同步的是安装意图，不固定插件版本；全新安装使用 marketplace 当前提供的版本。已有插件需要升级时，手动运行 `omp plugin marketplace update`，再运行 `omp plugin upgrade <插件名@marketplace名称>`。
+
+安装失败时脚本返回非零状态；修复网络等问题后重新运行即可，已完成的安装会跳过。从清单删除一项不会卸载本机插件；卸载需显式运行 `omp plugin uninstall --scope user <插件名@marketplace名称>`。其他插件不受影响。
+
+当前会话安装后执行 `/reload-plugins`，或重启 omp。Context7 实测需要账号授权，每台机器单独在 omp 会话中执行：
+
+```text
+/mcp reauth context7
+/mcp test context7
+```
+
+不要提交 `~/.omp/plugins/`、marketplace 缓存、安装状态中的绝对路径或 OAuth/API key。授权由 omp 在本机管理，仓库不复制凭据。
 
 ## 日常修改
 
@@ -45,7 +69,7 @@ git push origin main
 
 不自动提交或推送。不要把 token、API key 或密码写入此配置；Git 忽略规则不能阻止已跟踪文件中的敏感值进入提交。
 
-`.gitignore` 使用白名单，只允许主配置、安装脚本、说明、忽略规则、已纳入的 wording 文件和 `.github/workflows/secrets.yml` 进入版本管理。新增其他文件时，需要显式调整白名单并检查内容。修改 wording 后，将对应的 `omp/skills/wording/` 文件一并 commit、push。
+`.gitignore` 使用白名单，只允许主配置、插件清单、安装脚本、说明、忽略规则、已纳入的 wording 文件和 `.github/workflows/secrets.yml` 进入版本管理。新增其他文件时，需要显式调整白名单并检查内容。修改 wording 或插件清单后，将对应的 `omp/skills/wording/` 或 `omp/plugins.txt` 文件一并 commit、push。
 
 ## Secret 扫描 CI
 
