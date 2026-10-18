@@ -38,19 +38,13 @@ cd omp-setup
 
 | 插件 | 来源 | 用途 |
 | --- | --- | --- |
-| `context7@claude-plugins-official` | `anthropics/claude-plugins-official` | 查询第三方库文档 |
 | `frontend-design@claude-plugins-official` | `anthropics/claude-plugins-official` | 前端设计指导 |
 
 换机器或拉取清单更新后运行 `./install.sh`。清单同步的是安装意图，不固定插件版本；全新安装使用 marketplace 当前提供的版本。已有插件需要升级时，手动运行 `omp plugin marketplace update`，再运行 `omp plugin upgrade <插件名@marketplace名称>`。
 
 安装失败时脚本返回非零状态；修复网络等问题后重新运行即可，已完成的安装会跳过。从清单删除一项不会卸载本机插件；卸载需显式运行 `omp plugin uninstall --scope user <插件名@marketplace名称>`。其他插件不受影响。
 
-当前会话安装后执行 `/reload-plugins`，或重启 omp。Context7 实测需要账号授权，每台机器单独在 omp 会话中执行：
-
-```text
-/mcp reauth context7
-/mcp test context7
-```
+当前会话安装后执行 `/reload-plugins`，或重启 omp。
 
 不要提交 `~/.omp/plugins/`、marketplace 缓存、安装状态中的绝对路径或 OAuth/API key。授权由 omp 在本机管理，仓库不复制凭据。
 
