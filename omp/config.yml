@@ -1,0 +1,37 @@
+modelRoles:
+  default: openai-codex/gpt-6-astra:high
+  Daily: deepseek/deepseek-flash:high
+  wording: openai-codex/gpt-6-astra:high
+symbolPreset: unicode
+composer:
+  shape: claude
+theme:
+  dark: dark-nord
+  light: alabaster
+setupVersion: 2
+expandThinkingBlocks: false
+task:
+  agentModelOverrides:
+    reviewer: deepseek/deepseek-v4-flash
+hideThinkingBlock: true
+statusLine:
+  preset: custom
+  separator: none
+  transparent: true
+  sessionAccent: false
+  leftSegments:
+    - model
+    - path
+    - git
+  rightSegments:
+    - context_pct
+display:
+  shimmer: disabled
+cycleOrder:
+  - smol
+  - default
+  - slow
+  - Daily
+  - wording
+dev:
+  autoqaConsent: granted

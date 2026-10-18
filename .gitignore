@@ -1,0 +1,7 @@
+# Track only the reviewed setup files, never the omp data directory.
+/**
+!/.gitignore
+!/README.md
+!/install.sh
+!/omp/
+!/omp/config.yml
