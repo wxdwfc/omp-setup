@@ -34,6 +34,8 @@ cd omp-setup
 
 直接编辑 `omp/config.yml`，或在 omp 中使用 `/settings`、`omp config set`。omp 保存主配置时会保留软链接，更新仓库中的文件。
 
+状态栏右侧显示 `usage`（供应商额度）和 `context_pct`（上下文占用率）；Codex 订阅额度详情可在会话中用 `/usage` 查看，或运行 `omp usage --provider openai-codex`。
+
 ```bash
 git diff -- omp/config.yml
 git add omp/config.yml

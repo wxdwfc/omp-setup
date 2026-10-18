@@ -24,6 +24,7 @@ statusLine:
     - path
     - git
   rightSegments:
+    - usage
     - context_pct
 display:
   shimmer: disabled
