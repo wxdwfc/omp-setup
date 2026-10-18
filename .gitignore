@@ -5,3 +5,8 @@
 !/install.sh
 !/omp/
 !/omp/config.yml
+!/omp/skills/
+!/omp/skills/wording/
+!/omp/skills/wording/SKILL.md
+!/omp/skills/wording/references/
+!/omp/skills/wording/references/wording-rules.md
