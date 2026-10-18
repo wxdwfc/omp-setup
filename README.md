@@ -43,7 +43,24 @@ git push origin main
 
 不自动提交或推送。不要把 token、API key 或密码写入此配置；Git 忽略规则不能阻止已跟踪文件中的敏感值进入提交。
 
-`.gitignore` 使用白名单，只允许配置、安装脚本、本文档及已纳入的 wording 文件进入版本管理。新增其他文件时，需要显式调整白名单并检查内容。修改 wording 后，将对应的 `omp/skills/wording/` 文件一并 commit、push。
+`.gitignore` 使用白名单，只允许主配置、安装脚本、说明、忽略规则、已纳入的 wording 文件和 `.github/workflows/secrets.yml` 进入版本管理。新增其他文件时，需要显式调整白名单并检查内容。修改 wording 后，将对应的 `omp/skills/wording/` 文件一并 commit、push。
+
+## Secret 扫描 CI
+
+`.github/workflows/secrets.yml` 在每次 push、pull request 和手动触发时运行 [Gitleaks](https://github.com/gitleaks/gitleaks/releases/tag/v8.30.1)，扫描 checkout 拉取到的所有分支和标签的完整 Git 历史，包括当前检出的提交。发现疑似 secret 时，`Gitleaks` 检查失败；输出中的 secret 值完全脱敏，不上传扫描报告。
+
+- 无需配置额外的 GitHub Secrets 或许可证。工作流仅授予 `contents: read`，checkout 不保留认证凭据。
+- checkout 固定到 commit SHA；Gitleaks 固定到版本和发布包 SHA-256。升级时需同步更新对应的固定值。
+- CI 在推送后才运行，无法阻止 secret 首次上传。若需阻止未通过扫描的 PR 合并，在 GitHub 分支保护或 ruleset 中将 `Gitleaks` 设置为必需检查。
+- 命中真实凭据时，先撤销或轮换，再清理 Git 历史；仅从最新文件删除不足以让完整历史扫描通过。规则扫描无法保证发现所有类型的 secret。
+
+本地安装 Gitleaks 后，可在推送前运行与 CI 相同的历史扫描：
+
+```bash
+gitleaks git --redact=100 --verbose --no-banner --log-opts="--all --full-history -m" .
+```
+
+此命令不检查尚未提交的修改；检查当前文件使用 `gitleaks dir --redact=100 .`。
 
 ## 恢复原配置
 
