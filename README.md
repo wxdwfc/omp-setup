@@ -1,6 +1,6 @@
 # omp-setup
 
-个人 omp 配置、自写 wording skill 及其必需规则、marketplace 插件清单，不包含 secrets、凭据、会话或缓存。
+个人 omp 配置、Research 自定义主题、自写 wording skill 及其必需规则、marketplace 插件清单，不包含 secrets、凭据、会话或缓存。
 
 ## 安装
 
@@ -15,6 +15,8 @@ cd omp-setup
 安装脚本通过 `omp config path` 获取当前配置目录，将其中的 `config.yml` 链接到本仓库的 `omp/config.yml`。如果当前使用的是 `config.yaml`，则保留该文件名。`OMP_PROFILE` 和 `PI_CODING_AGENT_DIR` 按 omp 自身规则生效。
 
 同时将当前配置目录中的 `skills/wording` 链接到本仓库的 `omp/skills/wording`。已有 wording 目录或链接会完整备份到 `config-backup.XXXXXX/wording`，其他 skills 不受影响。
+
+主题按文件安装：将当前配置目录中的 `themes/research-night.json` 和 `themes/research-day.json` 分别链接到本仓库 `omp/themes/` 下的同名文件。已有文件或旧链接会逐个备份到 `config-backup.XXXXXX/`，其他主题不受影响；目标路径若是目录，脚本会拒绝替换。
 
 - 原文件或旧链接保存在配置目录下的 `config-backup.XXXXXX/` 中，安装时打印具体路径。
 - 重复安装已经正确的链接不产生新备份。
@@ -54,16 +56,22 @@ cd omp-setup
 
 状态栏右侧显示 `usage`（供应商额度）和 `context_pct`（上下文占用率）；Codex 订阅额度详情可在会话中用 `/usage` 查看，或运行 `omp usage --provider openai-codex`。
 
+界面采用 Research 自定义主题：深色 `research-night`、浅色 `research-day`，搭配 Claude 风格输入框和透明状态栏，使用 `display.shimmer: classic`、隐藏 thinking。`symbolPreset: nerd` 使用 Nerd 图标，建议终端选择 JetBrains Mono Nerd Font；若图标显示为方框，可将其改回 `unicode`，不影响其他界面功能。本仓库不安装或修改终端字体。
+
+子任务列表使用 `display.pinnedAgents: collapsed`，并启用 `display.subagentLivePreview`，显示各固定子任务当前或最近的工具调用。修改后重新启动 `omp` 体验；没有活动子任务时看不到实时预览效果。这套配置不依赖额外 UI 插件，也不安装通知扩展。
+
+主题配色保存在 `omp/themes/research-night.json` 和 `omp/themes/research-day.json`。首次拉取主题文件或移动仓库后运行 `./install.sh` 建立链接；之后直接编辑这些文件即可，无需另行复制到本机配置目录。
+
 ```bash
-git diff -- omp/config.yml
-git add omp/config.yml
+git diff -- omp/config.yml omp/themes/
+git add omp/config.yml omp/themes/
 git commit -m "Update omp preferences"
 git push origin main
 ```
 
 不自动提交或推送。不要把 token、API key 或密码写入此配置；Git 忽略规则不能阻止已跟踪文件中的敏感值进入提交。
 
-`.gitignore` 使用白名单，只允许主配置、插件清单、安装脚本、说明、忽略规则、已纳入的 wording 文件和 `.github/workflows/secrets.yml` 进入版本管理。新增其他文件时，需要显式调整白名单并检查内容。修改 wording 或插件清单后，将对应的 `omp/skills/wording/` 或 `omp/plugins.txt` 文件一并 commit、push。
+`.gitignore` 使用白名单，只允许主配置、两个 Research 主题文件、插件清单、安装脚本、说明、忽略规则、已纳入的 wording 文件和 `.github/workflows/secrets.yml` 进入版本管理。新增其他文件时，需要显式调整白名单并检查内容；新增主题还需更新 `install.sh` 的 `theme_files` 列表。修改 wording 或插件清单后，将对应的 `omp/skills/wording/` 或 `omp/plugins.txt` 文件一并 commit、push。
 
 ## Secret 扫描 CI
 
@@ -87,3 +95,5 @@ gitleaks git --redact=100 --verbose --no-banner --log-opts="--all --full-history
 在安装输出指定的备份目录中找到原配置。确认当前配置文件仍是本安装脚本创建的软链接，移除该链接，再将备份移回原路径。不要删除仓库中的 `omp/config.yml`；其他 omp 文件无需变动。
 
 恢复旧 wording 时，先确认当前 `skills/wording` 是安装脚本创建的软链接，移除该链接，再把安装输出中的备份 `wording` 目录或旧链接移回 `skills/wording`。
+
+恢复旧主题时，先确认对应的 `themes/research-night.json` 或 `themes/research-day.json` 仍是本安装脚本创建的软链接，移除该链接，再把安装输出指定备份目录中的同名文件或旧链接移回原路径。两个主题分别备份，可能位于不同的 `config-backup.XXXXXX/` 目录中。

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Link config and wording, then install missing user-scoped marketplace plugins.
+# Link config, wording, and themes, then install missing user-scoped marketplace plugins.
 set -euo pipefail
 
 repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
@@ -8,6 +8,11 @@ source_file="$repo_dir/omp/config.yml"
 skill_dir="$repo_dir/omp/skills/wording"
 for file in "$skill_dir/SKILL.md" "$skill_dir/references/wording-rules.md"; do
     [[ -f "$file" ]] || { printf 'Missing skill file: %s\n' "$file" >&2; exit 1; }
+done
+theme_dir="$repo_dir/omp/themes"
+theme_files=(research-night.json research-day.json)
+for file in "${theme_files[@]}"; do
+    [[ -f "$theme_dir/$file" ]] || { printf 'Missing theme file: %s\n' "$theme_dir/$file" >&2; exit 1; }
 done
 plugin_file="$repo_dir/omp/plugins.txt"
 [[ -f "$plugin_file" ]] || { printf 'Missing plugin list: %s\n' "$plugin_file" >&2; exit 1; }
@@ -28,6 +33,12 @@ if [[ -d "$target" ]]; then
     printf 'Refusing to replace a directory: %s\n' "$target" >&2
     exit 1
 fi
+for file in "${theme_files[@]}"; do
+    if [[ -d "$agent_dir/themes/$file" ]]; then
+        printf 'Refusing to replace a directory: %s\n' "$agent_dir/themes/$file" >&2
+        exit 1
+    fi
+done
 link_path() {
     local source="$1" target="$2" backup_dir
     if [[ -L "$target" && "$(readlink -- "$target")" == "$source" ]]; then
@@ -46,6 +57,10 @@ link_path() {
 link_path "$source_file" "$target"
 mkdir -p -- "$agent_dir/skills"
 link_path "$skill_dir" "$agent_dir/skills/wording"
+mkdir -p -- "$agent_dir/themes"
+for file in "${theme_files[@]}"; do
+    link_path "$theme_dir/$file" "$agent_dir/themes/$file"
+done
 
 # Use omp's inventory rather than copying machine-specific plugin state.
 installed=$(omp plugin list --json)

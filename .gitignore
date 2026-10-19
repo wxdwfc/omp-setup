@@ -6,6 +6,9 @@
 !/omp/
 !/omp/config.yml
 !/omp/plugins.txt
+!/omp/themes/
+!/omp/themes/research-night.json
+!/omp/themes/research-day.json
 !/omp/skills/
 !/omp/skills/wording/
 !/omp/skills/wording/SKILL.md

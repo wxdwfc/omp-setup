@@ -2,12 +2,12 @@ modelRoles:
   default: openai-codex/gpt-6-astra:high
   Daily: deepseek/deepseek-flash:high
   wording: openai-codex/gpt-6-astra:high
-symbolPreset: unicode
+symbolPreset: nerd
 composer:
   shape: claude
 theme:
-  dark: dark-nord
-  light: alabaster
+  dark: research-night
+  light: research-day
 setupVersion: 2
 expandThinkingBlocks: false
 task:
@@ -27,7 +27,9 @@ statusLine:
     - usage
     - context_pct
 display:
-  shimmer: disabled
+  shimmer: classic
+  pinnedAgents: collapsed
+  subagentLivePreview: true
 cycleOrder:
   - smol
   - default
