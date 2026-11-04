@@ -56,6 +56,8 @@ cd omp-setup
 
 状态栏右侧显示 `usage`（供应商额度）和 `context_pct`（上下文占用率）；Codex 订阅额度详情可在会话中用 `/usage` 查看，或运行 `omp usage --provider openai-codex`。
 
+状态栏使用 `statusLine.compactThinkingLevel: false`，在模型名后以 `· high` 等文字显示 thinking effort 等级，不缩成图标。此项只改变等级的显示方式，不改变实际 effort，也不影响 `hideThinkingBlock` 对思考内容的隐藏。
+
 界面采用 Research 自定义主题：深色 `research-night`、浅色 `research-day`，搭配 Claude 风格输入框和透明状态栏，使用 `display.shimmer: classic`、隐藏 thinking。`symbolPreset: nerd` 使用 Nerd 图标，建议终端选择 JetBrains Mono Nerd Font；若图标显示为方框，可将其改回 `unicode`，不影响其他界面功能。本仓库不安装或修改终端字体。
 
 子任务列表使用 `display.pinnedAgents: collapsed`，并启用 `display.subagentLivePreview`，显示各固定子任务当前或最近的工具调用。修改后重新启动 `omp` 体验；没有活动子任务时看不到实时预览效果。这套配置不依赖额外 UI 插件，也不安装通知扩展。

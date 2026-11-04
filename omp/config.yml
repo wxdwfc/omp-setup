@@ -2,6 +2,8 @@ modelRoles:
   default: openai-codex/gpt-6-astra:high
   Daily: deepseek/deepseek-flash:high
   wording: openai-codex/gpt-6-astra:high
+  tiny: openai-codex/gpt-6.1-sol:high
+  smol: openai-codex/gpt-6.1-terra:xhigh
 symbolPreset: nerd
 composer:
   shape: claude
@@ -26,6 +28,7 @@ statusLine:
   rightSegments:
     - usage
     - context_pct
+  compactThinkingLevel: false
 display:
   shimmer: classic
   pinnedAgents: collapsed
@@ -38,3 +41,12 @@ cycleOrder:
   - wording
 dev:
   autoqaConsent: granted
+retry:
+  maxRetries: 3
+  baseDelayMs: 1000
+  maxDelayMs: 30000
+skills:
+  customDirectories:
+    - /Users/wxd/.codex/skills
+codexResets:
+  autoRedeem: "no"
