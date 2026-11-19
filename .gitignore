@@ -14,6 +14,8 @@
 !/omp/skills/wording/SKILL.md
 !/omp/skills/wording/references/
 !/omp/skills/wording/references/wording-rules.md
+!/agy/
+!/agy/omp-statusline.py
 !/.github/
 !/.github/workflows/
 !/.github/workflows/secrets.yml

@@ -1,22 +1,41 @@
 # omp-setup
 
-个人 omp 配置、Research 自定义主题、自写 wording skill 及其必需规则、marketplace 插件清单，不包含 secrets、凭据、会话或缓存。
+个人 omp 与 Antigravity (`agy`) 配置仓库：包含 omp 主配置、Research 自定义主题、共享的自写 wording skill 及其必需规则、marketplace 插件清单，以及 Antigravity (`agy`) 的 omp 风格单行 HUD 状态栏脚本（`agy/omp-statusline.py`），不包含 secrets、凭据、会话或缓存。
 
-## 安装
+## 安装（支持 omp 与 agy 分别或同时配置）
 
-先安装 omp、Git 和 jq（macOS 可用 `brew install jq`），然后克隆仓库并运行；首次安装插件需要联网：
+先安装 Git 和 jq（macOS 可用 `brew install jq`；配置 omp 需先安装 omp），然后克隆仓库并按需运行：
 
 ```bash
 git clone https://github.com/wxdwfc/omp-setup.git
 cd omp-setup
+
+# 同时配置 omp 和 Antigravity (agy)
 ./install.sh
+
+# 仅配置 omp
+./install.sh omp
+
+# 仅配置 Antigravity (agy)
+./install.sh agy
 ```
+
+### 1. `omp` 配置（`./install.sh omp`）
 
 安装脚本通过 `omp config path` 获取当前配置目录，将其中的 `config.yml` 链接到本仓库的 `omp/config.yml`。如果当前使用的是 `config.yaml`，则保留该文件名。`OMP_PROFILE` 和 `PI_CODING_AGENT_DIR` 按 omp 自身规则生效。
 
 同时将当前配置目录中的 `skills/wording` 链接到本仓库的 `omp/skills/wording`。已有 wording 目录或链接会完整备份到 `config-backup.XXXXXX/wording`，其他 skills 不受影响。
 
 主题按文件安装：将当前配置目录中的 `themes/research-night.json` 和 `themes/research-day.json` 分别链接到本仓库 `omp/themes/` 下的同名文件。已有文件或旧链接会逐个备份到 `config-backup.XXXXXX/`，其他主题不受影响；目标路径若是目录，脚本会拒绝替换。
+
+### 2. Antigravity (`agy`) 配置（`./install.sh agy`）
+
+- **HUD 状态栏脚本**：将 `~/.config/agy/omp-statusline.py` 软链接到本仓库的 `agy/omp-statusline.py`（原文件若存在会先备份到 `~/.config/agy/config-backup.XXXXXX/`）。
+- **`settings.json` 状态栏注册**：通过 `jq` 在 `~/.gemini/antigravity-cli/settings.json` 中就地更新 `statusLine` 字段指向 `~/.config/agy/omp-statusline.py`，保留本机 `trustedWorkspaces` 等其他配置不变，不将 `settings.json` 纳入仓库（变更前会在 `~/.config/agy/config-backup.XXXXXX/settings.json` 保存备份）。
+- **共享 `wording` Skill**：将 `~/.gemini/config/skills/wording` 软链接到本仓库的 `omp/skills/wording`，使 `omp` 与 `agy` 共用同一份 wording skill。
+- **HUD 同步周期**：`agy/omp-statusline.py` 默认启用 **5 分钟（`300` 秒）** 的本地缓存（环境变量 `AGY_OMP_SYNC_INTERVAL=300`），在缓存周期内避免重复派生 `git` 子进程和重算配额布局；切换模型、思考强度、工作目录或缩放终端宽度时会自动立即刷新。
+
+### 通用链接与备份规则
 
 - 原文件或旧链接保存在配置目录下的 `config-backup.XXXXXX/` 中，安装时打印具体路径。
 - 重复安装已经正确的链接不产生新备份。
